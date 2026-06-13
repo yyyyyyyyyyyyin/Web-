@@ -4,6 +4,7 @@ const filterButtons = document.querySelectorAll(".filter-button");
 const postCards = document.querySelectorAll("#filterablePosts .post-item");
 const commentForm = document.getElementById("commentForm");
 const formStatus = document.getElementById("formStatus");
+const recentComments = document.getElementById("recentComments");
 
 const storageKey = "linxi-blog-theme";
 
@@ -61,6 +62,30 @@ function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function createCommentItem(name, message) {
+  const item = document.createElement("li");
+  item.className = "recent-comment-item";
+
+  const avatar = document.createElement("span");
+  avatar.className = "recent-comment-item__avatar";
+  avatar.setAttribute("aria-hidden", "true");
+  avatar.textContent = name.slice(0, 1).toUpperCase();
+
+  const content = document.createElement("div");
+
+  const meta = document.createElement("p");
+  meta.className = "recent-comment-item__meta";
+  meta.textContent = `刚刚 · ${name}`;
+
+  const text = document.createElement("p");
+  text.className = "recent-comment-item__text";
+  text.textContent = message;
+
+  content.append(meta, text);
+  item.append(avatar, content);
+  return item;
+}
+
 commentForm.addEventListener("submit", (event) => {
   event.preventDefault();
   clearErrors();
@@ -95,6 +120,9 @@ commentForm.addEventListener("submit", (event) => {
   }
 
   formStatus.textContent = `提交成功，感谢你留言，${name}。`;
+  if (recentComments) {
+    recentComments.prepend(createCommentItem(name, message));
+  }
   commentForm.reset();
 });
 
